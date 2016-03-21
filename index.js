@@ -11,7 +11,7 @@ var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var promise = require('bluebird');
 
-var task = require('geronimo.task');
+var task = require('picaso.task');
 
 var browserify = require('./browserify');
 var lessc = require('./lessc');
