@@ -6,7 +6,7 @@ var httpProxy = require('http-proxy');
 var cfg = config.get('server.proxy');
 var proxy = httpProxy.createProxyServer(cfg.config);
 
-var cls = require('geronimo.utils').console;
+var cls = require('picaso.utils').console;
 
 /**
  * 将请求传送给代理，由代理完成下面步骤

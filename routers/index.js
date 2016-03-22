@@ -6,7 +6,7 @@ var config = require('config');
 var findit = require('findit');
 var promise = require('bluebird');
 
-var cls = require('geronimo.utils').console;
+var cls = require('picaso.utils').console;
 
 /**
  * 将路由文件加载到web服务中

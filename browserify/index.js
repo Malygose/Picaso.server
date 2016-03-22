@@ -8,7 +8,7 @@ var md5 = require('blueimp-md5');
 var npm = require('npm');
 var promise = require('bluebird');
 
-var utils = require('geronimo.utils');
+var utils = require('picaso.utils');
 
 var writeContent = require('./writeContent');
 

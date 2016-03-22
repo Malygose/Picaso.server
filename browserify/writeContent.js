@@ -2,7 +2,7 @@ var fs = require('fs');
 
 var config = require('config');
 
-var utils = require('geronimo.utils');
+var utils = require('picaso.utils');
 
 var ws;
 
