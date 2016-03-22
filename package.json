@@ -1,6 +1,6 @@
 {
     "name": "picaso.server",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "为项目提供web相关服务。",
     "main": "index.js",
     "scripts": {
