@@ -1,6 +1,6 @@
 {
     "name": "picaso.server",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "description": "为项目提供web相关服务。",
     "main": "index.js",
     "scripts": {
@@ -29,6 +29,7 @@
         "cors": "2.7.1",
         "express": "4.13.3",
         "express-session": "1.11.3",
+        "factor-bundle": "2.5.0",
         "findit": "2.0.0",
         "http-proxy": "1.12.0",
         "less": "2.5.3",

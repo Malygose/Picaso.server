@@ -93,7 +93,7 @@ module.exports = function() {
     var useSession = function() {
         return new promise(function(resolve) {
             var sessionCfg = cfg.session.config;
-            if (process.env.NODE_ENV === 'production') {
+            if (process.env.NODE_ENV == 'production') {
                 sessionCfg.store = new RedisStore(cfg.redis.config);
             }
             app.use(session(sessionCfg));
@@ -116,6 +116,7 @@ module.exports = function() {
      */
     var useBrowserify = function() {
         return new promise(function(resolve) {
+            if (process.env.NODE_ENV == 'production') app.get('*-' + cfg.browserify.commonReferenceUrl.substring(cfg.browserify.commonReferenceUrl.lastIndexOf('/') + 1), browserify.getSubFile);
             app.get(cfg.browserify.commonReferenceUrl, browserify.getCommonFile);
             app.get('*.js', browserify.browseFile);
             resolve();
@@ -128,7 +129,7 @@ module.exports = function() {
     var useLessc = function() {
         return new promise(function(resolve) {
             app.get(cfg.less.commonReferenceUrl, lessc.getCommonFile);
-            if (process.env.NODE_ENV !== 'production') {
+            if (process.env.NODE_ENV != 'production') {
                 cfg.less.path.forEach(function(p) {
                     app.use(lessMiddleware(p, cfg.less.config));
                 });
@@ -163,7 +164,7 @@ module.exports = function() {
     this.listen = function() {
         return new promise(function(resolve) {
             httpServer = app.listen(cfg.port, resolve);
-            if (process.env.NODE_ENV !== 'production' || cfg.useSocket) {
+            if (process.env.NODE_ENV != 'production' || cfg.useSocket) {
                 webSocketServer = new webSocket(httpServer);
                 addListeners();
             }

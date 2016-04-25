@@ -23,7 +23,7 @@ module.exports.init = function() {
 
                 if (lessConfig.customFile && lessConfig.customFile.length) {
                     lessConfig.customFile.forEach(function(p) {
-                        if (path.extname(p) === '.less') {
+                        if (path.extname(p) == '.less') {
                             chunk += '@import "' + p + '";';
                         } else {
                             chunk += '@import (inline) "' + p + '";';
@@ -34,7 +34,7 @@ module.exports.init = function() {
                 commonReferenceModule.forEach(function(m) {
                     if (m.file) {
                         m.file.forEach(function(p) {
-                            if (path.extname(p) === '.less') {
+                            if (path.extname(p) == '.less') {
                                 chunk += '@import "' + p + '";';
                             } else {
                                 chunk += '@import (inline) "' + p + '";';
@@ -43,7 +43,7 @@ module.exports.init = function() {
                     }
                 });
 
-                if (process.env.NODE_ENV === 'production') {
+                if (process.env.NODE_ENV == 'production') {
                     plugins.push(new lessPluginCleanCSS({
                         advanced: true
                     }));

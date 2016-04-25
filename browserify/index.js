@@ -10,20 +10,17 @@ var promise = require('bluebird');
 
 var utils = require('picaso.utils');
 
-var writeContent = require('./writeContent');
-
+var commonFile = require('./commonFile');
 /**
  * 加载配置文件中的browserify相关配置，生成静态公共文件
  */
 module.exports.init = function() {
     return new promise(function(resolve) {
-        var filePath = path.join(__dirname, './_.js');
-
         // 生成静态文件存放文件夹
         var generateStaticFolder = function() {
             return new promise(function(res) {
                 var backupPath = path.join(__dirname, './backup');
-                if (process.env.NODE_ENV === 'production') {
+                if (process.env.NODE_ENV == 'production') {
                     if (fs.existsSync(backupPath)) {
                         async.waterfall([function(next) {
                             fs.readdir(backupPath, next);
@@ -43,24 +40,11 @@ module.exports.init = function() {
 
         // 生成公共文件
         var generateCommonFile = function() {
-            var ws = writeContent.getWriteStream(filePath);
-            return new promise(function(res) {
-                async.waterfall([function(next) {
-                    async.forEachSeries(config.get('server.browserify.commonReferenceModule'), writeContent.writeByModule, next);
-                }, function(next) {
-                    writeContent.writeByCustom(); // 写入自定义内容
-                    browserify(filePath).bundle(next);
-                }, function(res, next) {
-                    fs.writeFile(filePath, res, next);
-                }], function(err) {
-                    ws.close();
-                    if (err) {
-                        fs.truncateSync(filePath, 0);
-                        fs.writeFileSync(filePath, utils.disposeBrowserifyError(err));
-                    }
-                    res();
-                });
-            });
+            if (process.env.NODE_ENV == 'production') {
+                return commonFile.generateInProduction();
+            } else {
+                return commonFile.generateInDevelop();
+            }
         };
 
         generateStaticFolder().then(generateCommonFile).then(resolve).done();
@@ -75,10 +59,17 @@ module.exports.getCommonFile = function(req, res) {
 };
 
 /**
+ * 当请求模块文件时，将模块文件以流的形式传送出去
+ */
+module.exports.getSubFile = function(req, res) {
+    fs.createReadStream(path.join(__dirname, './backup', req.url)).pipe(res);
+};
+
+/**
  * 处理js文件做出的请求
  */
 module.exports.browseFile = function(req, res) {
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV == 'production') {
         var backupPath = path.join(__dirname, './backup', md5.md5(req.url) + '.js');
         if (fs.existsSync(backupPath)) {
             fs.createReadStream(backupPath).pipe(res);
