@@ -78,10 +78,10 @@ module.exports.generateInProduction = function() {
             var ws = fs.createWriteStream(path.join(__dirname, './_.js'));
 
             fs.readdir(backupPath, function(err, files) {
-                ws.write('var script, heads;\n');
+                ws.write('var script, heads;\n\n');
                 files.forEach(function(f) {
-                    ws.write('script = document.createElement("script");\nscript.setAttribute("type", "text/javascript");\nscript.setAttribute("src", "' + f + '");\n');
-                    ws.write('heads = document.getElementsByTagName("head");\nif(heads.length) heads[0].appendChild(script); else document.documentElement.appendChild(script);\n\n');
+                    ws.write('script = document.createElement(\'script\');\nscript.setAttribute(\'type\', \'text/javascript\');\nscript.setAttribute(\'src\', \'' + f + '\');\n');
+                    ws.write('heads = document.getElementsByTagName(\'head\');\nif(heads.length) heads[0].appendChild(script); else document.documentElement.appendChild(script);\n\n');
                 });
                 writeContent.writeContentWithCustom(ws);
 
