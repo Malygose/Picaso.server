@@ -4,6 +4,7 @@ var path = require('path');
 var async = require('async');
 var browserify = require('browserify');
 var config = require('config');
+var factor = require('factor-bundle');
 var promise = require('bluebird');
 
 var writeContent = require('./writeContent');
@@ -66,7 +67,7 @@ module.exports.generateInProduction = function() {
         // 将子文件进行browserify编译
         var browseSubFile = function(next) {
             var b = browserify(modules);
-            b.plugin('factor-bundle', {
+            b.plugin(factor, {
                 outputs: modules
             });
             b.bundle(next);
