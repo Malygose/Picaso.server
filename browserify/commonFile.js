@@ -6,6 +6,7 @@ var browserify = require('browserify');
 var config = require('config');
 var factor = require('factor-bundle');
 var promise = require('bluebird');
+var utils = require('picaso.utils');
 
 var writeContent = require('./writeContent');
 

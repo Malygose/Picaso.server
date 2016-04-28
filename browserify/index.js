@@ -7,7 +7,6 @@ var config = require('config');
 var md5 = require('blueimp-md5');
 var npm = require('npm');
 var promise = require('bluebird');
-
 var utils = require('picaso.utils');
 
 var commonFile = require('./commonFile');

@@ -7,10 +7,9 @@ var cookieParser = require('cookie-parser');
 var cors = require('cors');
 var express = require('express');
 var lessMiddleware = require('less-middleware');
+var promise = require('bluebird');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
-var promise = require('bluebird');
-
 var task = require('picaso.task');
 
 var browserify = require('./browserify');
