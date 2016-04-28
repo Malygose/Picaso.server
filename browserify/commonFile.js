@@ -75,14 +75,21 @@ module.exports.generateInProduction = function() {
 
         // 将所有子文件引入到主文件
         var browseMainFile = function(err, next) {
+            var commonReferenceUrl = config.get('server.browserify.commonReferenceUrl');
+            var suffix = commonReferenceUrl.substring(commonReferenceUrl.lastIndexOf('/') + 1);
             var backupPath = path.join(__dirname, './backup');
             var ws = fs.createWriteStream(path.join(__dirname, './_.js'));
 
             fs.readdir(backupPath, function(err, files) {
                 ws.write('var script, heads;\n\n');
                 files.forEach(function(f) {
-                    ws.write('script = document.createElement(\'script\');\nscript.setAttribute(\'type\', \'text/javascript\');\nscript.setAttribute(\'src\', \'' + f + '\');\n');
-                    ws.write('heads = document.getElementsByTagName(\'head\');\nif(heads.length) heads[0].appendChild(script); else document.documentElement.appendChild(script);\n\n');
+                    if (!!~f.indexOf(suffix)) {
+                        ws.write('script = document.createElement(\'script\');\n');
+                        ws.write('script.setAttribute(\'type\', \'text/javascript\');\n');
+                        ws.write('script.setAttribute(\'src\', \'' + f + '\');\n');
+                        ws.write('heads = document.getElementsByTagName(\'head\');\n');
+                        ws.write('if(heads.length) heads[0].appendChild(script); else document.documentElement.appendChild(script);\n\n');
+                    }
                 });
                 writeContent.writeContentWithCustom(ws);
 

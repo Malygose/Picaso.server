@@ -62,7 +62,19 @@ module.exports.getCommonFile = function(req, res) {
  * 当请求模块文件时，将模块文件以流的形式传送出去
  */
 module.exports.getSubFile = function(req, res) {
-    fs.createReadStream(path.join(__dirname, './backup', req.url)).pipe(res);
+    var backupPath = path.join(__dirname, './backup', md5.md5(req.url) + '.js');
+    if (fs.existsSync(backupPath)) {
+        fs.createReadStream(backupPath).pipe(res);
+    } else {
+        browserify(path.join(__dirname, './backup', req.url)).bundle(function(err, r) {
+            if (err) {
+                res.send(utils.disposeBrowserifyError(err));
+            } else {
+                fs.createWriteStream(backupPath).write(r);
+                res.send(r);
+            }
+        });
+    }
 };
 
 /**
