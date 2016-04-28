@@ -5,6 +5,7 @@ var async = require('async');
 var browserify = require('browserify');
 var config = require('config');
 var factor = require('factor-bundle');
+var md5 = require('blueimp-md5');
 var promise = require('bluebird');
 var utils = require('picaso.utils');
 
@@ -74,31 +75,28 @@ module.exports.generateInProduction = function() {
             b.bundle(next);
         };
 
-        // 将所有子文件引入到主文件
-        var browseMainFile = function(err, next) {
-            var commonReferenceUrl = config.get('server.browserify.commonReferenceUrl');
-            var suffix = commonReferenceUrl.substring(commonReferenceUrl.lastIndexOf('/') + 1);
+        // 将子文件进行重命名
+        var renameSubFile = function(err, next) {
             var backupPath = path.join(__dirname, './backup');
-            var ws = fs.createWriteStream(path.join(__dirname, './_.js'));
-
-            fs.readdir(backupPath, function(err, files) {
-                ws.write('var script, heads;\n\n');
-                files.forEach(function(f) {
-                    if (!!~f.indexOf(suffix)) {
-                        ws.write('script = document.createElement(\'script\');\n');
-                        ws.write('script.setAttribute(\'type\', \'text/javascript\');\n');
-                        ws.write('script.setAttribute(\'src\', \'' + f + '\');\n');
-                        ws.write('heads = document.getElementsByTagName(\'head\');\n');
-                        ws.write('if(heads.length) heads[0].appendChild(script); else document.documentElement.appendChild(script);\n\n');
-                    }
-                });
-                writeContent.writeContentWithCustom(ws);
-
-                next();
-            });
+            async.waterfall([function(next) {
+                fs.readdir(backupPath, next);
+            }, function(files, next) {
+                async.forEachSeries(files, function(f, next) {
+                    var sourcePath = path.join(backupPath, f);
+                    var compilePath = path.join(backupPath, md5.md5('/' + f) + '.js');
+                    fs.rename(sourcePath, compilePath, next);
+                }, next);
+            }], next);
         };
 
-        async.waterfall([getContentWithModule, browseSubFile, browseMainFile], res);
+        // browserify主文件
+        var browseMainFile = function(next) {
+            var ws = fs.createWriteStream(path.join(__dirname, './_.js'));
+            writeContent.writeContentWithCustom(ws);
+            ws.close(next);
+        };
+
+        async.waterfall([getContentWithModule, browseSubFile, compileSubFile, browseMainFile], res);
     });
 };
 
