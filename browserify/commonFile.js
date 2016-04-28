@@ -96,7 +96,7 @@ module.exports.generateInProduction = function() {
             ws.close(next);
         };
 
-        async.waterfall([getContentWithModule, browseSubFile, compileSubFile, browseMainFile], res);
+        async.waterfall([getContentWithModule, browseSubFile, renameSubFile, browseMainFile], res);
     });
 };
 
